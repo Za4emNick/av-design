@@ -5,481 +5,555 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AV Design Studio — Architectural & Interior Design · NYC</title>
   <meta name="description" content="Bold, timeless architecture & interiors by AV Design Studio. NYC attitude, functional elegance." />
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+	<link rel="icon" type="image/png" href="img/portfolio/logo-light.png">
+
+
+
   <style>
-
-  /* Mobile header/menu refinements */
-@media (max-width: 640px){
-  header .nav{height:64px}
-  .brand{font-size:18px}
-  .brand-wrap{gap:8px}
-  .brand-logo{height:22px}
-
-  .menu{
-    gap:12px;
-    font-size:14px;
-    flex-wrap:nowrap;             /* в одну линию */
-    overflow-x:auto;              /* аккуратный горизонт. скролл при переполнении */
-    -webkit-overflow-scrolling:touch;
-  }
-  .menu::-webkit-scrollbar{display:none}
-  .menu a{white-space:nowrap}
-  .menu .btn.primary{display:none} /* большая CTA скрыта на очень маленьких экранах */
-  .theme-toggle{padding:6px 10px}
-
-  section{padding:64px 0}
-  .section-title{font-size:28px}
-  .h1{font-size:30px}
-}
-
+    /* === DESIGN TOKENS === */
     :root{
-      --black:#000; --coal:#111; --gray:#EDEDED; --off:#F7F7F7; --max:1200px;
-      --gap:24px; --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.08)
+      --max:1200px;
+      --gap:24px;
+      --radius:16px;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+
+      --bg:#ffffff;
+      --text:#111111;
+      --muted:#555555;
+      --border:#e6e6e6;
+      --card:#ffffff;
+      --header-bg:rgba(255,255,255,0.92);
+      --overlay:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55));
+
+      /* NYC header background control */
+      --nyc-height: clamp(220px, 30vh, 420px);
+      --nyc-shift: 0px;          /* changes on scroll for parallax */
+      --nyc-fade: 0.35;          /* fade intensity (0–1) */
     }
+    [data-theme="dark"]{
+      --bg:#0b0b0b;
+      --text:#f5f5f5;
+      --muted:#cfcfcf;
+      --border:#222222;
+      --card:#111111;
+      --header-bg:rgba(0,0,0,0.80);
+      --overlay:linear-gradient(180deg,rgba(0,0,0,.40),rgba(0,0,0,.65));
+      --nyc-fade: 0.55;
+    }
+
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;background:#fff;color:#111;font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
     img{max-width:100%;display:block}
     a{color:inherit;text-decoration:none}
     .container{max-width:var(--max);margin:0 auto;padding:0 var(--gap)}
     .stack-24>*+*{margin-top:24px}
-    .stack-48>*+*{margin-top:48px}
-    .btn{display:inline-block;padding:14px 22px;border:1px solid #111;border-radius:999px}
-    .btn.primary{background:#111;color:#fff}
-    .btn.ghost:hover{background:#111;color:#fff}
-    /* Header */
-    header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #eee}
-    header .nav{height:72px;display:flex;align-items:center;justify-content:space-between}
-    .brand{font-family:"Space Grotesk";letter-spacing:.02em;font-weight:700}
-    .menu{display:flex;gap:24px;align-items:center}
-    /* Hero */
-    .hero{position:relative;min-height:88vh;display:grid;place-items:end;overflow:hidden}
-    .hero__bg{position:absolute;inset:0;background:url("https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1920&auto=format&fit=crop") center/cover fixed;filter:grayscale(50%)}
-    .hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55))}
-    .hero__inner{position:relative;color:#fff;padding:96px 0}
-    .h1{font:700 64px/1.05 "Space Grotesk",Inter,system-ui;letter-spacing:-.01em;margin:0}
-    .sub{opacity:.9;max-width:640px}
-    .hero__buttons{display:flex;gap:16px;margin-top:24px}
-    /* Sections */
-    section{padding:88px 0;border-top:1px solid #eee}
+    .btn{display:inline-block;padding:14px 22px;border:1px solid var(--text);border-radius:999px;color:var(--text);transition:background .25s ease,color .25s ease}
+    .btn.primary{background:var(--text);color:var(--bg)}
+    .btn.ghost:hover{background:var(--text);color:var(--bg)}
+
+		/* ===== HEADER (not fixed) with NYC background, parallax & fade ===== */
+	header {
+	  position: relative;
+	  z-index: 2;
+	  background: var(--header-bg);
+	  transition: box-shadow .25s ease, background .25s ease;
+	}
+
+	header .nav {
+	  height: 90px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	}
+
+	.brand-wrap {
+	  display: flex;
+	  align-items: center;
+	  gap: 14px;
+	}
+
+	.brand {
+	  font-family: "Space Grotesk";
+	  letter-spacing: .02em;
+	  font-weight: 700;
+	  font-size: 22px;
+	}
+
+	.brand-logo {
+	  height: 42px;
+	  width: auto;
+	  transition: transform .3s ease;
+	  object-fit: contain;
+	}
+
+	/* лёгкий эффект при наведении */
+	.brand-logo:hover {
+	  transform: scale(1.05);
+	}
+
+	@media (max-width: 900px) {
+	  .brand-logo { height: 36px; }
+	}
+
+
+    .menu{display:flex;align-items:center;gap:28px}
+    .menu a{font-size:16px}
+    .menu a:hover{text-decoration:underline}
+    .menu-actions{display:flex;align-items:center;gap:12px}
+
+    /* Theme toggle */
+    .theme-toggle{
+      padding:10px 14px;
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--text);
+      border-radius:999px;
+      cursor:pointer;
+      transition:transform .25s ease, background .25s ease, color .25s ease, opacity .4s ease, filter .4s ease;
+      opacity:.0; transform:translateY(6px);
+    }
+    .theme-toggle.ready{opacity:1; transform:none}
+    .theme-toggle:hover{transform:translateY(-1px);background:var(--text);color:var(--bg)}
+
+    /* subtle dark fade for legibility + fade-out to content */
+    .nyc-bg::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,calc(var(--nyc-fade) + .05)) 0%, rgba(0,0,0,calc(var(--nyc-fade) - .10)) 40%, rgba(0,0,0,0) 100%);
+    }
+
+    /* soft shadow on scroll */
+    header.scrolled{box-shadow:0 12px 40px rgba(0,0,0,.12)}
+
+	/* ===== HERO ===== */
+	.hero {
+	  position: relative;
+	  overflow: hidden;
+	  border-top: 1px solid var(--border);
+	  background-image: url('https://aws-tiqets-cdn.imgix.net/images/content/0f5f3db3f91e458b87f5111b39648e76.jpg?auto=format&fit=crop&w=2000&q=80');
+	  background-size: cover;
+	  background-position: center;
+	  background-repeat: no-repeat;
+	}
+
+	/* затемнение фона */
+	.hero::before {
+	  content: "";
+	  position: absolute;
+	  inset: 0;
+	  background: linear-gradient(
+		rgba(0, 0, 0, 0.75) 0%,  /* сверху сильнее тень */
+		rgba(0, 0, 0, 0.55) 50%, /* середина */
+		rgba(0, 0, 0, 0.8) 100%  /* низ — ещё темнее */
+	  );
+	  z-index: 1;
+	  pointer-events: none;
+	}
+
+	/* текст */
+	.hero .hero__inner {
+	  position: relative;
+	  z-index: 2;
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  text-align: center;
+	  padding: 96px 20px;
+	  min-height: 70vh;
+	  color: #bfbfbf; /* мягкий серовато-белый */
+	  text-shadow: 0 5px 12px rgba(0,0,0,0.5);
+	}
+
+	/* заголовок */
+	.hero .h1 {
+	  font: 700 64px/1.05 "Space Grotesk", Inter, system-ui;
+	  letter-spacing: -0.01em;
+	  margin: 0;
+	  color: #bfbfbf; /* чуть ярче серого */
+	}
+
+	/* подзаголовок */
+	.hero .sub {
+	  color: #d6d6d6; /* мягкий серый оттенок */
+	  opacity: 0.95;
+	  max-width: 640px;
+	  font-weight: 400;
+	}
+
+	/* кнопки */
+	.hero__buttons {
+	  display: flex;
+	  gap: 16px;
+	  margin-top: 24px;
+	}
+
+    /* If you prefer a fixed hero image, keep it; design preserved */
+    .hero{background-image:url('https://aws-tiqets-cdn.imgix.net/images/content/0f5f3db3f91e458b87f5111b39648e76.jpg?auto=format&fit=crop&w=2000&q=80'); background-size:cover; background-position:center; background-repeat:no-repeat}
+
+    /* ===== SECTIONS ===== */
+    section{padding:88px 0;border-top:1px solid var(--border); background:var(--bg)}
     .section-title{font:700 40px/1.15 "Space Grotesk";margin:0 0 16px}
-    .muted{color:#555}
-    /* Grid */
+    .muted{color:var(--muted)}
     .grid{display:grid;gap:24px}
     .grid.cols-3{grid-template-columns:repeat(3,1fr)}
     .grid.cols-4{grid-template-columns:repeat(4,1fr)}
-    @media (max-width:1024px){.grid.cols-4{grid-template-columns:repeat(2,1fr)}.h1{font-size:48px}}
-    @media (max-width:768px){.grid.cols-3{grid-template-columns:repeat(1,1fr)}.grid.cols-4{grid-template-columns:repeat(1,1fr)}.h1{font-size:36px}}
-    .card{border:1px solid #e6e6e6;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:#fff}
-    .card__img{aspect-ratio:4/3;object-fit:cover;filter:grayscale(50%)}
-    .card__body{padding:16px}
-    .meta{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#777}
-    .title{font-weight:600}
-    .card:hover .card__img{transform:scale(1.03)}
-    .card__img{transition:transform .35s ease}
-    /* Process */
-    .step{padding:20px;border:1px solid #e6e6e6;border-radius:12px}
-    .step h4{margin:.2rem 0;font:600 18px/1.3 Inter}
-    /* Services */
-    .service{padding:24px;border:1px dashed #ddd;border-radius:12px}
-    .service h4{margin:0 0 8px}
-    /* About */
+    .card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:var(--card);transition:transform .35s ease, box-shadow .35s ease}
+    .card__img{aspect-ratio:4/3;object-fit:cover;filter:grayscale(50%);transition:transform .45s ease, filter .45s ease}
+    .card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.12)}
+    .card:hover .card__img{transform:scale(1.04);filter:saturate(1.05)}
+    .meta{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+    .step{padding:20px;border:1px solid var(--border);border-radius:12px}
+    .service{padding:24px;border:1px dashed var(--border);border-radius:12px}
     .about{display:grid;grid-template-columns:1.2fr .8fr;gap:32px}
-    @media (max-width:900px){.about{grid-template-columns:1fr}}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
-    /* Contact */
+    @media (max-width:900px){.about{grid-template-columns:1fr;gap:16px}}
     .form{display:grid;gap:16px}
-    .form input,.form select,.form textarea{width:100%;padding:14px;border:1px solid #ccc;border-radius:10px;background:#fff}
+    .form input,.form select,.form textarea{width:100%;padding:14px;border:1px solid #ccc;border-radius:10px;background:#fff;transition:border-color .2s ease, box-shadow .2s ease}
     .form textarea{min-height:160px}
-    /* Footer */
-    footer{padding:64px 0;background:#0c0c0c;color:#bbb}
-    footer a{color:#fff}
-    .credits{border-top:1px solid #222;margin-top:24px;padding-top:24px;color:#777}
-    /* Simple reveal */
-    [data-reveal]{opacity:0;transform:translateY(24px);transition:.6s ease}
+    .form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+
+    /* ===== FOOTER ===== */
+    footer{padding:64px 0;background:transparent;color:var(--muted)}
+    footer .brand, footer a, footer p, footer .credits{color:var(--text)}
+    .credits{border-top:1px solid var(--border);margin-top:24px;padding-top:24px}
+    footer a.credit-author{font-weight:700;border-bottom:1px solid var(--text);text-underline-offset:3px;padding-bottom:2px}
+    footer a.credit-author:hover{text-decoration:underline}
+
+    /* ===== SCROLL REVEAL ===== */
+    [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease}
     [data-reveal].is-visible{opacity:1;transform:none}
-  
-/* ==== AV LOGO INTEGRATION ==== */
-.brand-wrap{display:flex;align-items:center;gap:12px}
-.brand-logo{height:28px;width:auto;display:block}
-.footer-logo{height:22px;width:auto;display:block}
-.hero__logo{
-  position:absolute;inset:auto 0 12vh 0;
-  margin:auto;
-  width:min(40vw, 520px);
-  opacity:.0;
-  filter:drop-shadow(0 6px 18px rgba(0,0,0,.25));
-  animation:heroLogoFade 1200ms ease 300ms forwards;
-  pointer-events:none;
-}
-@keyframes heroLogoFade{to{opacity:.22}}
-@media (max-width:768px){
-  .hero__logo{width:min(70vw, 360px); bottom:10vh;}
-}
+
+    /* ===== SCROLL TO TOP ===== */
+    #scrollTopBtn{
+      position:fixed; bottom:28px; right:28px;
+      background:var(--text); color:var(--bg);
+      border:none; border-radius:50%;
+      width:48px; height:48px; font-size:22px; font-weight:600;
+      box-shadow:0 8px 25px rgba(0,0,0,0.25);
+      opacity:0; pointer-events:none; transform:translateY(20px);
+      transition:opacity .4s ease, transform .4s ease, background .3s ease, color .3s ease;
+      z-index:1200;
+    }
+    #scrollTopBtn.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+    #scrollTopBtn:hover{transform:translateY(-4px)}
+    [data-theme="dark"] #scrollTopBtn{background:#fff;color:#111}
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:1024px){ .h1{font-size:48px} .grid.cols-4{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:900px){
+      header .nav{flex-direction:column;gap:10px;height:auto;padding:12px 0}
+      .menu{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:10px 14px;justify-content:center}
+      .menu a,.menu .btn{padding:10px 0;text-align:center}
+      .menu-actions{grid-column:span 2;display:flex;flex-direction:column;gap:8px}
+      .theme-toggle{width:100%}
+      .grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
+      .hero .hero__inner{padding:60px 20px}
+      .section-title{font-size:30px}
+      .brand{font-size:22px}
+      .brand-logo{height:36px}
+    }
+    @media (max-width:768px){ .h1{font-size:36px} }
+	
+	/* === PORTFOLIO CAPTION FIX — centered & theme-aware === */
+	.card {
+	  position: relative;
+	  overflow: hidden;
+	}
+
+	/* Подпись теперь поверх изображения, снизу */
+	.card figcaption {
+	  position: absolute;
+	  bottom: 0;
+	  left: 0;
+	  right: 0;
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  padding: 8px 12px;
+	  font-size: 13px;
+	  text-transform: uppercase;
+	  letter-spacing: 0.05em;
+	  text-align: center;
+	  background: rgba(0, 0, 0, 0.45); /* затемнение на 45% */
+	  color: #fff;
+	  backdrop-filter: blur(4px);
+	  border-top: 1px solid rgba(255, 255, 255, 0.15);
+	  transition: background 0.3s ease, color 0.3s ease;
+	}
+
+	/* При наведении — немного светлее фон */
+	.card:hover figcaption {
+	  background: rgba(0, 0, 0, 0.6);
+	}
+
+	/* Светлая тема — делает подпись чуть темнее */
+	[data-theme="light"] .card figcaption {
+	  background: rgba(255, 255, 255, 0.55);
+	  color: #111;
+	  border-top: 1px solid rgba(0, 0, 0, 0.1);
+	}
+	[data-theme="light"] .card:hover figcaption {
+	  background: rgba(255, 255, 255, 0.75);
+	}
+
+	/* === LIGHTBOX STYLES === */
+	.lightbox {
+	  position: fixed;
+	  inset: 0;
+	  background: rgba(0, 0, 0, 0.9);
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  opacity: 0;
+	  pointer-events: none;
+	  transition: opacity 0.35s ease;
+	  z-index: 2000;
+	}
+
+	.lightbox.show {
+	  opacity: 1;
+	  pointer-events: auto;
+	}
+
+	.lightbox img {
+	  max-width: 90%;
+	  max-height: 90%;
+	  border-radius: 12px;
+	  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+	  transform: scale(0.95);
+	  transition: transform 0.35s ease;
+	}
+
+	.lightbox.show img {
+	  transform: scale(1);
+	  cursor: zoom-out;
+	}
+	/* === LIGHTBOX GALLERY STYLES === */
+		.lightbox {
+		  position: fixed;
+		  inset: 0;
+		  background: rgba(0,0,0,0.9);
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  opacity: 0;
+		  pointer-events: none;
+		  transition: opacity 0.35s ease;
+		  z-index: 2000;
+		}
+
+		.lightbox.show {
+		  opacity: 1;
+		  pointer-events: auto;
+		}
+
+		.lightbox img {
+		  max-width: 90%;
+		  max-height: 90%;
+		  border-radius: 12px;
+		  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+		  transform: scale(0.96);
+		  transition: transform 0.35s ease;
+		}
+
+		.lightbox.show img {
+		  transform: scale(1);
+		  cursor: zoom-out;
+		}
+
+		/* стрелки */
+		.lightbox-btn {
+		  position: absolute;
+		  top: 50%;
+		  transform: translateY(-50%);
+		  background: rgba(255,255,255,0.15);
+		  color: #fff;
+		  border: none;
+		  font-size: 48px;
+		  line-height: 1;
+		  padding: 10px 18px;
+		  border-radius: 50%;
+		  cursor: pointer;
+		  transition: background 0.3s ease, transform 0.3s ease;
+		  user-select: none;
+		}
+
+		.lightbox-btn:hover {
+		  background: rgba(255,255,255,0.3);
+		  transform: translateY(-50%) scale(1.1);
+		}
+
+		.lightbox-btn.prev { left: 40px; }
+		.lightbox-btn.next { right: 40px; }
+
+		@media (max-width: 768px){
+		  .lightbox-btn { font-size: 36px; padding: 8px 14px; }
+		  .lightbox-btn.prev { left: 16px; }
+		  .lightbox-btn.next { right: 16px; }
+		}
+		/* === LIGHTBOX GALLERY WITH CAPTION === */
+		.lightbox {
+		  position: fixed;
+		  inset: 0;
+		  background: rgba(0,0,0,0.92);
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  opacity: 0;
+		  pointer-events: none;
+		  transition: opacity 0.35s ease;
+		  z-index: 2000;
+		}
+
+		.lightbox.show {
+		  opacity: 1;
+		  pointer-events: auto;
+		}
+
+		.lightbox-inner {
+		  display: flex;
+		  flex-direction: column;
+		  align-items: center;
+		  gap: 12px;
+		}
+
+		.lightbox img {
+		  max-width: 90%;
+		  max-height: 80vh;
+		  border-radius: 12px;
+		  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+		  transform: scale(0.96);
+		  transition: transform 0.35s ease;
+		}
+
+		.lightbox.show img {
+		  transform: scale(1);
+		  cursor: zoom-out;
+		}
+
+		.lightbox-caption {
+		  font-size: 15px;
+		  color: #ddd;
+		  text-align: center;
+		  max-width: 80%;
+		  letter-spacing: 0.05em;
+		  opacity: 0.9;
+		}
+
+		/* стрелки */
+		.lightbox-btn {
+		  position: absolute;
+		  top: 50%;
+		  transform: translateY(-50%);
+		  background: rgba(255,255,255,0.15);
+		  color: #fff;
+		  border: none;
+		  font-size: 48px;
+		  line-height: 1;
+		  padding: 10px 18px;
+		  border-radius: 50%;
+		  cursor: pointer;
+		  transition: background 0.3s ease, transform 0.3s ease;
+		  user-select: none;
+		}
+		.lightbox-btn:hover {
+		  background: rgba(255,255,255,0.3);
+		  transform: translateY(-50%) scale(1.1);
+		}
+		.lightbox-btn.prev { left: 40px; }
+		.lightbox-btn.next { right: 40px; }
+
+		@media (max-width: 768px){
+		  .lightbox-btn { font-size: 36px; padding: 8px 14px; }
+		  .lightbox-btn.prev { left: 16px; }
+		  .lightbox-btn.next { right: 16px; }
+		  .li
+
+	/* === HERO TEXT ENHANCEMENT === */
+	.hero .hero__inner {
+	  color: #fff;
+	  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); /* делает текст читаемым на фоне */
+	}
+
+	.hero .h1:hover {
+	  text-shadow: none;
+	  color: #ffffff;
+	}
 
 
-/* --- NAV & LOGO FIXES --- */
-header .nav {display:flex;align-items:center;justify-content:space-between;height:90px;}
-.brand-wrap {display:flex;align-items:center;gap:14px;}
-.brand-logo {height:42px;width:auto;transition:transform .3s ease, filter .3s ease;}
-.brand-logo:hover {transform:scale(1.05);filter:brightness(0.3);}
-.brand {font-size:22px;font-weight:700;letter-spacing:0.02em;color:var(--text);}
-.menu {display:flex;align-items:center;gap:28px;}
-.menu a {font-size:16px;text-decoration:none;color:var(--text);}
-.menu a:hover {text-decoration:underline;}
+	/* Подпись под заголовком */
+	.hero .sub {
+	  color: rgba(255, 255, 255, 0.9);
+	  font-weight: 400;
+	  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+	}
 
+	.hero .h1 {
+	  color: #d6d6d6;
+	  font-weight: 700;
+	  text-shadow: none;
+	}
 
-/* --- Color Image Filter Update --- */
-img {
-  filter: saturate(0.8);
-  transition: filter 0.4s ease;
-}
-img:hover {
-  filter: saturate(1.1);
-}
+	.hero .h1:hover {
+	  color: #d6d6d6; /* без эффекта наведения */
+	  text-shadow: none;
+	}
 
+	.hero .sub {
+	  color: #b3b3b3; /* чуть темнее подзаголовок */
+	  text-shadow: none;
+	}
+	[data-theme="dark"] .brand-logo {
+	  filter: brightness(3) contrast(1.4) saturate(1.05);
+	  opacity: 0.95;
+	}
 
-/* --- MOBILE RESPONSIVE FIXES --- */
-@media (max-width: 900px) {
-  header .nav {
-    flex-direction: column;
-    align-items: center;
-    height: auto;
-    padding: 12px 0;
-    gap: 10px;
-  }
-  .brand-wrap {
-    justify-content: center;
-  }
-  .menu {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .menu a, .menu .btn {
-    display: block;
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-  }
-  .hero__inner {
-    text-align: center;
-    padding: 60px 0;
-  }
-  .hero__buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-  .grid.cols-3, .grid.cols-4 {
-    grid-template-columns: 1fr;
-  }
-  .about {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .about .card__img {
-    max-height: 300px;
-    object-fit: cover;
-  }
-  footer .grid.cols-3 {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 20px;
-  }
-  footer .credits {
-    text-align: center;
-  }
-  .section-title {
-    font-size: 30px;
-  }
-  .brand {font-size:22px;font-weight:700;letter-spacing:0.02em;color:var(--text);}
-}
+	
 
-
-/* --- MOBILE MENU COMPACT FIX --- */
-@media (max-width: 900px) {
-  header .nav {
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0 20px;
-    gap: 12px;
-  }
-  .menu {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-    justify-content: center;
-    align-items: center;
-    gap: 10px 16px;
-    width: 100%;
-    max-width: 360px;
-  }
-  .menu a {font-size:16px;text-decoration:none;color:var(--text);}
-  .menu .btn.primary {
-    grid-column: span 2;
-    font-size: 15px;
-    padding: 10px 0;
-    margin-top: 6px;
-  }
-  .brand {font-size:22px;font-weight:700;letter-spacing:0.02em;color:var(--text);}
-  .brand-logo {
-    height: 36px;
-  }
-}
-
-
-/* --- Hero Text & Color Update --- */
-@keyframes fadeInHero {from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);}}
-.hero__content {animation:fadeInHero 1.2s ease forwards;}
-.hero__bg {filter:grayscale(50%) brightness(1.1);}
-@media (max-width: 768px) {
-  .hero__content h1 {font-size:26px;letter-spacing:1px;}
-  .hero__content p {font-size:16px;}
-  .hero__content span {font-size:18px;}
-}
-
-
-/* --- Hero Text Refresh --- */
-.hero__content h1, .hero__content p {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 1.2s ease forwards;
-}
-.hero__content p:nth-of-type(1) {animation-delay: 0.3s;}
-.hero__content p:nth-of-type(2) {animation-delay: 0.6s;}
-
-@keyframes fadeInUp {
-  from {opacity: 0; transform: translateY(20px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-
-@media (max-width: 768px) {
-  .hero__content h1 {font-size:30px;}
-  .hero__content p {font-size:16px;}
-}
-
-
-/* ===== Improvements (architecture, minimal, NYC) ===== */
-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(10px);transition:box-shadow .25s ease, background .25s ease}
-header.scrolled{box-shadow:0 8px 30px rgba(0,0,0,.08);background:rgba(255,255,255,0.98)}
-
-.hero{position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none;}
-.hero .hero__inner,.hero .hero__content{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px 20px;min-height:70vh}
-
-.hero .hero__content h1,.hero .h1{font-weight:700;letter-spacing:.02em;margin:0 0 10px}
-.hero .hero__content p{max-width:760px;margin:6px 0;color:#444}
-
-.card{overflow:hidden;transition:transform .35s ease, box-shadow .35s ease}
-.card .card__img{transition:transform .45s ease, filter .45s ease}
-.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.12)}
-.card:hover .card__img{transform:scale(1.04);filter:saturate(1.05)}
-
-.form input,.form select,.form textarea{transition:border-color .2s ease, box-shadow .2s ease}
-.form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.08)}
-
-[data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease}
-[data-reveal].is-visible{opacity:1;transform:none}
-
-body{background:#fff;color:#111}
-
-@media (max-width: 900px){
-  header .nav{flex-direction:column;gap:10px;height:auto;padding:12px 0}
-  .menu{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:10px 14px;justify-content:center}
-  .menu a,.menu .btn{padding:10px 0;text-align:center}
-  .grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
-  .about{grid-template-columns:1fr;gap:16px}
-}
-
-
-/* === THEME VARIABLES === */
-:root{
-  --bg:#ffffff;
-  --text:#111111;
-  --muted:#555555;
-  --border:#e6e6e6;
-  --card:#ffffff;
-  --header-bg:rgba(255,255,255,0.92);
-  --overlay:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55));
-}
-[data-theme="dark"]{
-  --bg:#0b0b0b;
-  --text:#f5f5f5;
-  --muted:#cfcfcf;
-  --border:#222222;
-  --card:#111111;
-  --header-bg:rgba(0,0,0,0.80);
-  --overlay:linear-gradient(180deg,rgba(0,0,0,.40),rgba(0,0,0,.65));
-}
-
-/* Apply variables */
-html,body{background:var(--bg);color:var(--text)}
-header{background:var(--header-bg) !important;}
-.brand,.menu a,.section-title,.title,.meta,.muted{color:var(--text)}
-.muted{color:var(--muted)}
-.card{background:var(--card);border-color:var(--border)}
-section{border-top:1px solid var(--border)}
-.hero__scrim{background:var(--overlay)}
-.btn{border-color:var(--text);color:var(--text)}
-.btn.primary{background:var(--text);color:var(--bg)}
-.btn.ghost:hover{background:var(--text);color:var(--bg)}
-footer{background:transparent;color:var(--muted)}
-footer .brand, footer a, footer p, footer .credits{color:var(--text)}
-footer .credits{border-top:1px solid var(--border)}
-
-
-/* Theme toggle */
-.theme-toggle{
-  margin-left:12px;
-  padding:8px 12px;
-  border:1px solid var(--border);
-  background:transparent;
-  color:var(--text);
-  border-radius:999px;
-  cursor:pointer;
-  transition:transform .2s ease, background .2s ease, color .2s ease;
-}
-.theme-toggle:hover{transform:translateY(-1px);background:var(--text);color:var(--bg)}
-@media (max-width:900px){ .theme-toggle{width:100%; margin-top:6px} }
-
-
-/* Accent highlight for credit author (works in both themes) */
-footer a.credit-author{
-  font-weight:700;
-  border-bottom:1px solid var(--text);
-  text-underline-offset:3px;
-  padding-bottom:2px;
-  color: var(--text);
-  text-decoration: none;
-}
-footer a.credit-author:hover{
-  text-decoration: underline;
-}
-
-/* NYC evening/night hero background */
-.hero{
-  background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2000&q=80');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-/* Logo: make it white in dark theme */
-[data-theme="dark"] .brand-logo {
-  filter: brightness(0) invert(1) drop-shadow(0 0 2px rgba(255,255,255,0.45));
-  transition: filter .3s ease;
-}
-/* keep hover bright in dark too */
-[data-theme="dark"] .brand-logo:hover {
-  filter: invert(1) brightness(1.15) drop-shadow(0 0 10px rgba(255,255,255,0.6));
-}
-
-/* Logo: make it white in dark theme */
-[data-theme="dark"] .brand-logo {
-  filter: brightness(0) invert(1) drop-shadow(0 0 2px rgba(255,255,255,0.45));
-  transition: filter .3s ease;
-}
-/* keep hover bright in dark too */
-[data-theme="dark"] .brand-logo:hover {
-  filter: invert(1) brightness(1.15) drop-shadow(0 0 10px rgba(255,255,255,0.6));
-}
-/* ==== FIX: дублирование фонового изображения hero ==== */
-.hero{
-  position: relative;
-  overflow: hidden;
-  background-repeat: no-repeat !important;
-  background-attachment: scroll !important; /* отключаем fixed-параллакс, чтобы не рвало фон */
-  background-position: center center;
-  background-size: cover;
-}
-
-/* если в hero есть отдельный слой/картинка с фоном — скрываем */
-.hero > .hero__bg,
-.hero > img.hero__bg,
-.hero > img[alt="hero"],
-.hero > .bg-image{
-  display: none !important;
-}
-
-/* чтобы фон секций точно перекрывал возможные артефакты ниже hero */
-section{ background: var(--bg); }
-
-/* Darken hero image a bit */
-:root{
-  /* светлая тема — мягче */
-  --overlay: linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.75));
-}
-[data-theme="dark"]{
-  /* тёмная тема — ещё на шаг темнее */
-  --overlay: linear-gradient(180deg, rgba(0,0,0,.60), rgba(0,0,0,.80));
-}
-
-  /* About: подпись под фото без лишнего воздуха */
-#about .card{ padding:0; margin:0; background:transparent; border-color:transparent; box-shadow:none; }
-#about .card__img{ display:block; }
-#about figcaption{ margin:6px 0 0; padding:0; background:transparent; color:var(--muted); }
-
-}
 </style>
+	
+  <!-- Default DARK on first paint -->
+  <script>
+    (function(){
+      try{
+        const saved = localStorage.getItem('theme');
+        const initial = saved ? saved : 'dark';
+        document.documentElement.setAttribute('data-theme', initial);
+      }catch(e){}
+    })();
+  </script>
 </head>
-<!-- Force dark on first paint -->
-<script>
-  (function () {
-    try { document.documentElement.setAttribute('data-theme','dark'); } catch(e){}
-  })();
-</script>
-
-<script>
-/* Theme toggle: default DARK on load, user can switch to LIGHT */
-(function(){
-  const root = document.documentElement;
-  const btn  = document.querySelector('.theme-toggle');
-
-  function setIcon(){
-    if (!btn) return;
-    btn.textContent = (root.getAttribute('data-theme') === 'dark') ? '☀' : '☾';
-  }
-  setIcon();
-
-  btn && btn.addEventListener('click', function(){
-    const next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    setIcon();
-  });
-})();
-</script>
-
-<script>
-  // Удаляем дублирующие фоновые картинки внутри hero (если их добавляет разметка/библиотека)
-  document.querySelectorAll('.hero .hero__bg, .hero img[alt="hero"], .hero .bg-image').forEach(n => {
-    n.style.display = 'none';
-  });
-</script>
 
 <body>
-  
+  <!-- NYC background layer behind header, with parallax -->
+  <div class="nyc-bg" aria-hidden="true"></div>
 
-<header>
-  <div class="container nav">
-    <div class="brand-wrap">
-      <img class="brand-logo" src="data:image/png;base64,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" alt="AV Logo"/ loading="lazy">
-      <div class="brand">AV Design Studio</div>
+  <header>
+    <div class="container nav">
+      <div class="brand-wrap">
+        <img class="brand-logo" src="img/portfolio/logo-dark.png" data-src-dark="img/portfolio/logo-dark.png"  data-src-light="img/portfolio/logo-light.png"  alt="AV Logo" loading="lazy">
+        <div class="brand">AV Design Studio</div>
+      </div>
+
+      <nav class="menu">
+        <a href="#portfolio">Portfolio</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contacts</a>
+        <div class="menu-actions">
+          <a class="btn primary" href="#contact">Request a Project</a>
+          <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">☾</button>
+        </div>
+      </nav>
     </div>
-    <nav class="menu">
-      <a href="#portfolio">Portfolio</a>
-      <a href="#services">Services</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contacts</a>
-      <a class="btn primary" href="#contact">Request a Project</a>
-    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">☾</button>
-</nav>
-  </div>
-</header>
-
-
+  </header>
 
   <section class="hero">
-    <div class="hero__bg" aria-hidden="true"></div>
-    <div class="hero__scrim" aria-hidden="true"></div>
-    
-    
     <div class="container hero__inner stack-24">
       <h1 class="h1" data-reveal>We design stories, not spaces.</h1>
       <p class="sub" data-reveal>New York energy. Architectural precision. Interiors that move you.</p>
@@ -488,365 +562,106 @@ section{ background: var(--bg); }
         <a class="btn ghost" href="#contact">Request a Project</a>
       </div>
     </div>
-
   </section>
 
-<!-- ===== Portfolio (local images you provided) ===== -->
-<section id="portfolio" class="section" data-reveal>
-  <div class="container">
-    <h2 class="section-title">Portfolio</h2>
-
-    <div class="grid cols-3" style="gap:16px">
-
-      <!-- 01 · Bedroom -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy" decoding="async"
-             src="img/portfolio/3a0320d1-a734-400b-b228-5c980dd7f919.jpg"
-             alt="Bedroom — soft neutrals, upholstered bed, art on walls">
-        <figcaption class="meta">·Bedroom · Soft Neutrals</figcaption>
-      </figure>
-
-      <!-- 02 · Living (Skyline) -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy" decoding="async"
-             src="img/portfolio/7cc26194-5733-4273-ae9d-40238ce0e229.jpg"
-             alt="Living room with panoramic NYC skyline">
-        <figcaption class="meta">·Living · Skyline View</figcaption>
-      </figure>
-
-      <!-- 03 · Kitchen (Marble & Dark Wood) -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy" decoding="async"
-             src="img/portfolio/9daa68dc-79cb-4c63-a978-7a3d7a12f8c1.jpg"
-             alt="Kitchen studio with marble island and dark wood">
-        <figcaption class="meta">·Kitchen · Marble &amp; Dark Wood</figcaption>
-      </figure>
-
-      <!-- 04 · Bathroom (Microcement & Glass) -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy" decoding="async"
-             src="img/portfolio/84c4c87f-9fe4-4bf1-85ac-85c8c91a6c59.png"
-             alt="Bathroom with freestanding tub and glass shower">
-        <figcaption class="meta">·Bathroom · Microcement &amp; Glass</figcaption>
-      </figure>
-
-      <!-- 05 · Lobby Lounge -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy" decoding="async"
-             src="img/portfolio/8581f903-4eb5-4fb1-a507-cb889ef4bf0b.png"
-             alt="Lobby lounge with sculptural sofa and plants">
-        <figcaption class="meta">·Lobby · Lounge</figcaption>
-      </figure>
-
-      <!-- 06 · Home Office -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy" decoding="async"
-             src="img/portfolio/dizayn-domashnego-kabineta-sovremennyy-stil.jpg"
-             alt="Home office with shelves and bright accents">
-        <figcaption class="meta">·Home Office · Modern Light</figcaption>
-      </figure>
-
+  <!-- ===== Portfolio ===== -->
+  <section id="portfolio" class="section" data-reveal>
+    <div class="container">
+      <h2 class="section-title">Interior Design</h2>
+      <div class="grid cols-3" style="gap:16px">
+        <figure class="card"><img class="card__img" loading="lazy" decoding="async" src="img/portfolio/3a0320d1-a734-400b-b228-5c980dd7f919.jpg" alt="Bedroom — soft neutrals"><figcaption class="meta">  Bedroom · Soft Neutrals</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" decoding="async" src="img/portfolio/7cc26194-5733-4273-ae9d-40238ce0e229.jpg" alt="Living room with panoramic NYC skyline"><figcaption class="meta">Living · Skyline View</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" decoding="async" src="img/portfolio/9daa68dc-79cb-4c63-a978-7a3d7a12f8c1.jpg" alt="Kitchen studio with marble island and dark wood"><figcaption class="meta">Kitchen · Marble &amp; Dark Wood</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" decoding="async" src="img/portfolio/84c4c87f-9fe4-4bf1-85ac-85c8c91a6c59.png" alt="Bathroom with freestanding tub and glass shower"><figcaption class="meta">Bathroom · Microcement &amp; Glass</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" decoding="async" src="img/portfolio/8581f903-4eb5-4fb1-a507-cb889ef4bf0b.png" alt="Lobby lounge with sculptural sofa and plants"><figcaption class="meta">Lobby · Lounge</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" decoding="async" src="img/portfolio/dizayn-domashnego-kabineta-sovremennyy-stil.jpg" alt="Home office with shelves"><figcaption class="meta">Home Office · Modern Light</figcaption></figure>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-
-
-<!-- Featured work from arinastarikova.com (authorized by user) -->
-</section>
-
+  <!-- ===== Featured (Arina Starikova) ===== -->
   <section id="Featured" class="section" data-reveal>
-  <div class="container">
-    <h2 class="section-title">Featured · Arina Starikova · Visualization </h2>
-
-    <div class="grid cols-3" style="gap:16px">
-      <!-- 1 -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy"
-             src="https://static.wixstatic.com/media/0dd824_3f899547266a464593bf88cca4569a49~mv2.jpg/v1/fill/w_1393%2Ch_1476%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_3f899547266a464593bf88cca4569a49~mv2.jpg"
-             alt="Faena House Miami — Drop Off (visualization by Arina Starikova)">
-        <figcaption class="meta">·Faena House Miami · Drop Off</figcaption>
-      </figure>
-
-      <!-- 2 -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy"
-             src="https://static.wixstatic.com/media/0dd824_f9b64c60aca043f2acaa362d48dc4131~mv2.jpg/v1/fill/w_1393%2Ch_973%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_f9b64c60aca043f2acaa362d48dc4131~mv2.jpg"
-             alt="Faena House Miami — Kitchen White (visualization by Arina Starikova)">
-        <figcaption class="meta">·Faena House Miami · Kitchen · White</figcaption>
-      </figure>
-
-      <!-- 3 -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy"
-             src="https://static.wixstatic.com/media/0dd824_8ebecebf39144f8ca923a9d7f6df9ee8~mv2.jpg/v1/fill/w_1393%2Ch_687%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_8ebecebf39144f8ca923a9d7f6df9ee8~mv2.jpg"
-             alt="The Laureate — Juliet Balcony, NYC (visualization by Arina Starikova)">
-        <figcaption class="meta">·The Laureate · Juliet Balcony · NYC</figcaption>
-      </figure>
-
-      <!-- 4 -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy"
-             src="https://static.wixstatic.com/media/0dd824_df9469038baa44cca62541138048229d~mv2.jpg/v1/fill/w_1393%2Ch_686%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_df9469038baa44cca62541138048229d~mv2.jpg"
-             alt="The Laureate — Living Room, NYC (visualization by Arina Starikova)">
-        <figcaption class="meta">·The Laureate · Living Room · NYC</figcaption>
-      </figure>
-
-      <!-- 5 -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy"
-             src="https://static.wixstatic.com/media/0dd824_ca7e04320f1b4dceac0e2bad12aa3a99~mv2.jpg/v1/fill/w_1393%2Ch_1006%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_ca7e04320f1b4dceac0e2bad12aa3a99~mv2.jpg"
-             alt="150 East 72nd — Theater Room, NYC (visualization by Arina Starikova)">
-        <figcaption class="meta">·150 East 72nd · Theater Room · NYC</figcaption>
-      </figure>
-
-      <!-- 6 -->
-      <figure class="card" data-reveal>
-        <img class="card__img" loading="lazy"
-             src="https://static.wixstatic.com/media/0dd824_ee68bfc38f764a64ab2192fefa0c255a~mv2.jpg/v1/fill/w_1393%2Ch_893%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_ee68bfc38f764a64ab2192fefa0c255a~mv2.jpg"
-             alt="50 United Nations Plaza — Lobby, NYC (visualization by Arina Starikova)">
-        <figcaption class="meta">·50 United Nations Plaza · Lobby · NYC</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-<!-- ===== Process (Interiors Only) ===== -->
-<section id="process" class="section" data-reveal>
-  <div class="container">
-    <h2 class="section-title">Process</h2>
-    <p class="muted" style="margin-bottom:22px">
-      An interiors-only, turnkey workflow — from first conversation to styling.
-    </p>
-
-    <div class="grid cols-3" style="gap:22px">
-      <!-- 01 -->
-      <div class="card step" data-reveal>
-        <div class="card__body">
-          <h4>01 · Discovery & Brief</h4>
-          <p class="muted">
-            Goals, lifestyle, budget, timeline. We align on scope and create a clear interior brief.
-          </p>
-        </div>
-      </div>
-
-      <!-- 02 -->
-      <div class="card step" data-reveal>
-        <div class="card__body">
-          <h4>02 · Site Measure & Audit</h4>
-          <p class="muted">
-            On-site measurements, photos, and an inventory of existing pieces to keep or replace.
-          </p>
-        </div>
-      </div>
-
-      <!-- 03 -->
-      <div class="card step" data-reveal>
-        <div class="card__body">
-          <h4>03 · Concept & Space Planning</h4>
-          <p class="muted">
-            Mood, palettes, and <strong>interior layouts</strong> (flow, adjacencies, furniture plans) that maximize light and usability.
-          </p>
-        </div>
-      </div>
-
-      <!-- 04 -->
-      <div class="card step" data-reveal>
-        <div class="card__body">
-          <h4>04 · Materials, FF&amp;E & Custom Millwork</h4>
-          <p class="muted">
-            Finishes, textiles, lighting, and bespoke cabinetry/details with elevations and schedules for trades.
-          </p>
-        </div>
-      </div>
-
-      <!-- 05 -->
-      <div class="card step" data-reveal>
-        <div class="card__body">
-          <h4>05 · Specifications & Procurement</h4>
-          <p class="muted">
-            Final specs, quoting and ordering. Coordination with vendors and your GC for install readiness.
-          </p>
-        </div>
-      </div>
-
-      <!-- 06 -->
-      <div class="card step" data-reveal>
-        <div class="card__body">
-          <h4>06 · Installation & Styling</h4>
-          <p class="muted">
-            Deliveries, white-glove installation, art & accessories, punch list — a complete, livable space.
-          </p>
-        </div>
+    <div class="container">
+      <h2 class="section-title">3D Visualization </h2>
+      <div class="grid cols-3" style="gap:16px">
+        <figure class="card"><img class="card__img" loading="lazy" src="https://static.wixstatic.com/media/0dd824_3f899547266a464593bf88cca4569a49~mv2.jpg/v1/fill/w_1393%2Ch_1476%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_3f899547266a464593bf88cca4569a49~mv2.jpg" alt="Faena House Miami — Drop Off"><figcaption class="meta">Faena House Miami · Drop Off</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" src="https://static.wixstatic.com/media/0dd824_f9b64c60aca043f2acaa362d48dc4131~mv2.jpg/v1/fill/w_1393%2Ch_973%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_f9b64c60aca043f2acaa362d48dc4131~mv2.jpg" alt="Faena House Miami — Kitchen White"><figcaption class="meta">Faena House Miami · Kitchen · White</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" src="https://static.wixstatic.com/media/0dd824_8ebecebf39144f8ca923a9d7f6df9ee8~mv2.jpg/v1/fill/w_1393%2Ch_687%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_8ebecebf39144f8ca923a9d7f6df9ee8~mv2.jpg" alt="The Laureate — Juliet Balcony, NYC"><figcaption class="meta">The Laureate · Juliet Balcony · NYC</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" src="https://static.wixstatic.com/media/0dd824_df9469038baa44cca62541138048229d~mv2.jpg/v1/fill/w_1393%2Ch_686%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_df9469038baa44cca62541138048229d~mv2.jpg" alt="The Laureate — Living Room, NYC"><figcaption class="meta">The Laureate · Living Room · NYC</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" src="https://static.wixstatic.com/media/0dd824_ca7e04320f1b4dceac0e2bad12aa3a99~mv2.jpg/v1/fill/w_1393%2Ch_1006%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_ca7e04320f1b4dceac0e2bad12aa3a99~mv2.jpg" alt="150 East 72nd — Theater Room, NYC"><figcaption class="meta">150 East 72nd · Theater Room · NYC</figcaption></figure>
+        <figure class="card"><img class="card__img" loading="lazy" src="https://static.wixstatic.com/media/0dd824_ee68bfc38f764a64ab2192fefa0c255a~mv2.jpg/v1/fill/w_1393%2Ch_893%2Cq_90%2Cenc_avif%2Cquality_auto/0dd824_ee68bfc38f764a64ab2192fefa0c255a~mv2.jpg" alt="50 United Nations Plaza — Lobby, NYC"><figcaption class="meta">50 United Nations Plaza · Lobby · NYC</figcaption></figure>
       </div>
     </div>
+  </section>
 
-    <p class="muted" style="margin-top:16px;font-size:13px">
-      *We specialize exclusively in interior design. Architectural and permitting services are not included. If necessary, we collaborate with your general contractor and/or architect, and such matters are clarified face-to-face.
-    </p>
-  </div>
-</section>
-
-
-
-<!-- ===== Services (Interiors Only) ===== -->
-<section id="services" class="section" data-reveal>
-  <div class="container">
-    <h2 class="section-title">Services We Provide</h2>
-    <p class="muted" style="margin-bottom:22px">
-      We focus exclusively on <strong>interior design</strong> — no architectural/permit services.
-      When needed, we collaborate with your general contractor and vendors.
-    </p>
-
-    <div class="grid cols-3" style="gap:22px">
-      <!-- 1 -->
-      <div class="card service" data-reveal>
-        <div class="card__body">
-          <h4>Interior Design</h4>
-          <p class="muted">
-            From concept development to final styling, we transform spaces into
-            personalized sanctuaries that reflect your lifestyle and refined aesthetics.
-          </p>
-        </div>
+  <!-- ===== Process ===== -->
+  <section id="process" class="section" data-reveal>
+    <div class="container">
+      <h2 class="section-title">Process</h2>
+      <p class="muted" style="margin-bottom:22px">An interiors-only, turnkey workflow — from first conversation to styling.</p>
+      <div class="grid cols-3" style="gap:22px">
+        <div class="card step"><div class="card__body"><h4>01 · Discovery & Brief</h4><p class="muted">Goals, lifestyle, budget, timeline. We align on scope and create a clear interior brief.</p></div></div>
+        <div class="card step"><div class="card__body"><h4>02 · Site Measure & Audit</h4><p class="muted">On-site measurements, photos, and an inventory of existing pieces to keep or replace.</p></div></div>
+        <div class="card step"><div class="card__body"><h4>03 · Concept & Space Planning</h4><p class="muted">Mood, palettes, and <strong>interior layouts</strong> (flow, adjacencies, furniture plans) that maximize light and usability.</p></div></div>
+        <div class="card step"><div class="card__body"><h4>04 · Materials, FF&amp;E & Custom Millwork</h4><p class="muted">Finishes, textiles, lighting, and bespoke cabinetry/details with elevations and schedules for trades.</p></div></div>
+        <div class="card step"><div class="card__body"><h4>05 · Specifications & Procurement</h4><p class="muted">Final specs, quoting and ordering. Coordination with vendors and your GC for install readiness.</p></div></div>
+        <div class="card step"><div class="card__body"><h4>06 · Installation & Styling</h4><p class="muted">Deliveries, white-glove installation, art & accessories, punch list — a complete, livable space.</p></div></div>
       </div>
-
-      <!-- 2 -->
-      <div class="card service" data-reveal>
-        <div class="card__body">
-          <h4>Full-Service Furnishing</h4>
-          <p class="muted">
-            Complete furnishing plans: bespoke furniture, lighting, textiles, and décor —
-            curated for function, comfort, and beauty.
-          </p>
-        </div>
-      </div>
-
-      <!-- 3 -->
-      <div class="card service" data-reveal>
-        <div class="card__body">
-          <h4>Renovations &amp; Interior Remodeling</h4>
-          <p class="muted">
-            Thoughtful interior updates that enhance comfort and efficiency while
-            respecting the existing character — executed with your GC and trades.
-          </p>
-        </div>
-      </div>
-
-      <!-- 4 -->
-      <div class="card service" data-reveal>
-        <div class="card__body">
-          <h4>Project Management (Interiors)</h4>
-          <p class="muted">
-            Scheduling, procurement, vendor coordination, delivery and installation —
-            on time, on budget, and to specification.
-          </p>
-        </div>
-      </div>
-
-      <!-- 5 -->
-      <div class="card service" data-reveal>
-        <div class="card__body">
-          <h4>Custom Millwork &amp; Detailing</h4>
-          <p class="muted">
-            Design and coordination of custom cabinetry, built-ins, and interior details
-            that unify the space and add a tailored finish.
-          </p>
-        </div>
-      </div>
-
-      <!-- 6 -->
-      <div class="card service" data-reveal>
-        <div class="card__body">
-          <h4>Space Planning &amp; Concept Development</h4>
-          <p class="muted">
-            Layouts, flow, zoning, and mood — visual presentations that maximize light and usability
-            and set a clear direction for the interiors.
-          </p>
-        </div>
-      </div>
+      <p class="muted" style="margin-top:16px;font-size:13px">*We specialize exclusively in interior design. Architectural and permitting services are not included. If necessary, we collaborate with your general contractor and/or architect, and such matters are clarified face-to-face.</p>
     </div>
+  </section>
 
-    <p class="muted" style="margin-top:16px;font-size:13px">
-      * Architectural design and permitting are not included in our scope.
-    </p>
-  </div>
-</section>
-
-
-
-
-<!-- ===== About ===== -->
-<section id="about" class="section">
-  <div class="container about">
-    <div>
-      <h2 class="section-title">About</h2>
-
-      <p>
-        AV Design Studio is a full-service interior design practice based in New York,
-        dedicated to creating spaces that embody refined aesthetics, thoughtful functionality,
-        and enduring quality.
-      </p>
-
-      <p>
-        We approach every project with a deep understanding of how people live and interact with
-        their environment. Whether designing a new build, transforming an existing space, or
-        curating a full-service furnishing plan, our process begins with listening — understanding
-        your vision, lifestyle, and aspirations. Each project is meticulously crafted from concept
-        to completion, guided by collaboration, precision, and an appreciation for timeless design.
-      </p>
-
-      <p>
-        Working closely with trusted artisans, builders, and vendors, we ensure that every detail
-        contributes to a cohesive, elevated living experience that feels distinctly yours.
-      </p>
-
-      <p class="muted">NYC — Interiors — Renovation</p>
-    </div>
-
-    <!-- Фото из папки img/portfolio -->
-    <figure class="card figure-overlay" data-reveal>
-      <img class="card__img" loading="lazy" decoding="async"
-           src="img/portfolio/0335bffb-1b2f-409b-b7d2-5a41c8dd2fd5.png"
-           alt="About — selected interior from portfolio">
-      <!-- Можно оставить пустым или удалить строку ниже -->
-      <figcaption class="meta">Forest Hills, Queens · NYC </figcaption>
-    </figure>
-  </div>
-</section>
-
-<section id="contact" class="section" data-reveal>
-  <div class="container">
-    <h2 class="section-title">Contacts</h2>
-
-
-    <form class="form" onsubmit="event.preventDefault();openMailto(this)">
-      <div class="grid cols-2" style="gap:12px">
-        <input name="name" placeholder="Your name*" required>
-        <input type="email" name="email" placeholder="Email*" required>
+  <!-- ===== Services ===== -->
+  <section id="services" class="section" data-reveal>
+    <div class="container">
+      <h2 class="section-title">Services We Provide</h2>
+      <p class="muted" style="margin-bottom:22px">We focus exclusively on <strong>interior design</strong> — no architectural/permit services. When needed, we collaborate with your general contractor and vendors.</p>
+      <div class="grid cols-3" style="gap:22px">
+        <div class="card service"><div class="card__body"><h4>Interior Design</h4><p class="muted">From concept development to final styling, we transform spaces into personalized sanctuaries that reflect your lifestyle and refined aesthetics.</p></div></div>
+        <div class="card service"><div class="card__body"><h4>Full-Service Furnishing</h4><p class="muted">Complete furnishing plans: bespoke furniture, lighting, textiles, and décor — curated for function, comfort, and beauty.</p></div></div>
+        <div class="card service"><div class="card__body"><h4>Renovations &amp; Interior Remodeling</h4><p class="muted">Thoughtful interior updates that enhance comfort and efficiency while respecting the existing character — executed with your GC and trades.</p></div></div>
+        <div class="card service"><div class="card__body"><h4>Project Management (Interiors)</h4><p class="muted">Scheduling, procurement, vendor coordination, delivery and installation — on time, on budget, and to specification.</p></div></div>
+        <div class="card service"><div class="card__body"><h4>Custom Millwork &amp; Detailing</h4><p class="muted">Design and coordination of custom cabinetry, built-ins, and interior details that unify the space and add a tailored finish.</p></div></div>
+        <div class="card service"><div class="card__body"><h4>Space Planning &amp; Concept Development</h4><p class="muted">Layouts, flow, zoning, and mood — visual presentations that maximize light and usability and set a clear direction for the interiors.</p></div></div>
       </div>
-      <input name="phone" placeholder="Phone (optional)">
-      <textarea name="message" placeholder="Tell us about your project*" required></textarea>
-      <button class="btn primary" type="submit">Send Email</button>
-      <small class="muted">
-  Opens the email app with a pre-filled message. We recommend manually emailing us or calling us.
-</small>
+      <p class="muted" style="margin-top:16px;font-size:13px">* Architectural design and permitting are not included in our scope.</p>
+    </div>
+  </section>
 
-    </form>
-  </div>
-</section>
+  <!-- ===== About ===== -->
+  <section id="about" class="section">
+    <div class="container about">
+      <div>
+        <h2 class="section-title">About</h2>
+        <p>AV Design Studio is a full-service interior design practice based in New York, dedicated to creating spaces that embody refined aesthetics, thoughtful functionality, and enduring quality.</p>
+        <p>We approach every project with a deep understanding of how people live and interact with their environment. Whether designing a new build, transforming an existing space, or curating a full-service furnishing plan, our process begins with listening — understanding your vision, lifestyle, and aspirations. Each project is meticulously crafted from concept to completion, guided by collaboration, precision, and an appreciation for timeless design.</p>
+        <p>Working closely with trusted artisans, builders, and vendors, we ensure that every detail contributes to a cohesive, elevated living experience that feels distinctly yours.</p>
+        <p class="muted">NYC — Interiors — Renovation</p>
+      </div>
+      <figure class="card figure-overlay" data-reveal>
+        <img class="card__img" loading="lazy" decoding="async" src="img/portfolio/0335bffb-1b2f-409b-b7d2-5a41c8dd2fd5.png" alt="About — selected interior from portfolio">
+        <figcaption class="meta">Forest Hills, Queens · NYC</figcaption>
+      </figure>
+    </div>
+  </section>
 
-<script>
-function openMailto(form){
-  const v = new FormData(form);
-  const to = "designedbyav@gmail.com";
-  const subject = encodeURIComponent("Project inquiry — AV Design Studio");
-  const body = encodeURIComponent(
-    `Name: ${v.get('name')}\nEmail: ${v.get('email')}\nPhone: ${v.get('phone')||'-'}\n\nMessage:\n${v.get('message')}`
-  );
-  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-}
-</script>
+  <!-- ===== Contact ===== -->
+  <section id="contact" class="section" data-reveal>
+    <div class="container">
+      <h2 class="section-title">Contacts</h2>
+      <form class="form" onsubmit="event.preventDefault();openMailto(this)">
+        <div class="grid cols-2" style="gap:12px">
+          <input name="name" placeholder="Your name*" required>
+          <input type="email" name="email" placeholder="Email*" required>
+        </div>
+        <input name="phone" placeholder="Phone (optional)">
+        <textarea name="message" placeholder="Tell us about your project*" required></textarea>
+        <button class="btn primary" type="submit">Send Email</button>
+        <small class="muted">Opens the email app with a pre-filled message. We recommend manually emailing us or calling us.</small>
+      </form>
+    </div>
+  </section>
 
-  
   <footer>
     <div class="container">
       <div class="grid cols-3">
@@ -861,89 +676,159 @@ function openMailto(form){
         <div>
           <div class="mono">Contacts</div>
           <p><a href="mailto:designedbyav@gmail.com">designedbyav@gmail.com</a></p>
-		  <p class="meta" style="margin:0 0 10px 0;">
-      <a href="tel:+19176181432">(917) 618-14-32</a>
-      &nbsp;·&nbsp;
-      <a href="tel:+13474010282">(347) 401-02-82</a>
-    </p>
+          <p class="meta" style="margin:0 0 10px 0;"><a href="tel:+19176181432">(917) 618-14-32</a> &nbsp;·&nbsp; <a href="tel:+13474010282">(347) 401-02-82)</a></p>
         </div>
       </div>
       <div class="credits">© AV Design Studio. All rights reserved. · by <a href="https://t.me/dima_b0nd" target="_blank" class="credit-author">Bondarev</a></div>
     </div>
   </footer>
 
+  <!-- Scroll-to-top -->
+  <button id="scrollTopBtn" aria-label="Scroll to top">↑</button>
+
   <script>
-    // Simple reveal on scroll (no libs)
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target) }})
-    },{threshold:.15});
-    document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+    // Mailto helper
+    function openMailto(form){
+      const v = new FormData(form);
+      const to = "designedbyav@gmail.com";
+      const subject = encodeURIComponent("Project inquiry — AV Design Studio");
+      const body = encodeURIComponent(
+        `Name: ${v.get('name')}\nEmail: ${v.get('email')}\nPhone: ${v.get('phone')||'-'}\n\nMessage:\n${v.get('message')}`
+      );
+      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    }
+
+    // Single IntersectionObserver for reveal
+    (function(){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+        })
+      },{threshold:.15});
+      document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+    })();
+
+    // Theme toggle (single, with persistence)
+    (function(){
+      const root = document.documentElement;
+      const btn  = document.querySelector('.theme-toggle');
+      if(!btn) return;
+
+      // initial state from DOM attribute (already set in head)
+      function setIcon(){
+        btn.textContent = (root.getAttribute('data-theme') === 'dark') ? '☀' : '☾';
+      }
+      setIcon();
+      // gentle appear
+      requestAnimationFrame(()=>btn.classList.add('ready'));
+
+      btn.addEventListener('click', ()=>{
+        const next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        setIcon();
+      });
+    })();
+
+    // Header shadow, scroll-to-top visibility, NYC parallax fade
+    (function(){
+      const header = document.querySelector('header');
+      const btnTop = document.getElementById('scrollTopBtn');
+      const root = document.documentElement;
+      let lastY = 0;
+
+      function onScroll(){
+        const y = window.scrollY || window.pageYOffset;
+
+        // Header soft shadow
+        if(y > 8) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+
+        // Scroll to top button
+        if(y > 400) btnTop.classList.add('visible'); else btnTop.classList.remove('visible');
+
+        // Parallax for NYC bg: move slower & soften fade
+        const shift = Math.min(0, -y * 0.12); // small upward move
+        root.style.setProperty('--nyc-shift', shift + 'px');
+        lastY = y;
+      }
+      window.addEventListener('scroll', onScroll, {passive:true});
+      onScroll();
+
+      btnTop.addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+    })();
   </script>
+	<!-- === LIGHTBOX GALLERY WITH CAPTION === -->
+	<div id="lightbox" class="lightbox">
+	  <button class="lightbox-btn prev" aria-label="Previous image">‹</button>
+	  <div class="lightbox-inner">
+		<img id="lightbox-img" src="" alt="expanded view">
+		<div id="lightbox-caption" class="lightbox-caption"></div>
+	  </div>
+	  <button class="lightbox-btn next" aria-label="Next image">›</button>
+	</div>
+	<script>
+	(function(){
+	  const images = Array.from(document.querySelectorAll('.card img'));
+	  const captions = images.map(img => img.closest('figure').querySelector('figcaption')?.innerText || '');
+	  const lightbox = document.getElementById('lightbox');
+	  const lightImg = document.getElementById('lightbox-img');
+	  const caption = document.getElementById('lightbox-caption');
+	  let index = 0;
 
-<script>
-// Header shadow on scroll
-(function(){
-  var header = document.querySelector('header');
-  if(!header) return;
-  function onScroll(){
-    if(window.scrollY > 8){ header.classList.add('scrolled'); }
-    else { header.classList.remove('scrolled'); }
-  }
-  window.addEventListener('scroll', onScroll, {passive:true});
-  onScroll();
-})();
+	  function showImage(i){
+		index = (i + images.length) % images.length;
+		lightImg.src = images[index].src;
+		caption.textContent = captions[index];
+		lightbox.classList.add('show');
+	  }
 
-// Scroll reveal (IntersectionObserver)
-(function(){
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
-    });
-  }, {threshold:0.15});
-  document.querySelectorAll('[data-reveal]').forEach(function(el){ io.observe(el); });
-})();
+	  images.forEach((img, i)=>{
+		img.addEventListener('click', ()=>showImage(i));
+	  });
 
-// Parallax support for hero background image
-(function(){
-  var bg = document.querySelector('.hero__bg');
-  var hero = document.querySelector('.hero');
-  if(!hero) return;
-  if(bg){
-    window.addEventListener('scroll', function(){
-      var y = window.pageYOffset * 0.15;
-      bg.style.transform = 'translateY(' + (y*-1) + 'px)';
-    }, {passive:true});
-  }else{
-    window.addEventListener('scroll', function(){
-      var y = window.pageYOffset * 0.15;
-      hero.style.backgroundPosition = 'center ' + (-y) + 'px';
-    }, {passive:true});
-  }
-})();
-</script>
+	  document.querySelector('.lightbox-btn.prev').addEventListener('click', e=>{
+		e.stopPropagation();
+		showImage(index - 1);
+	  });
 
+	  document.querySelector('.lightbox-btn.next').addEventListener('click', e=>{
+		e.stopPropagation();
+		showImage(index + 1);
+	  });
 
-<script>
-(function(){
-  const root = document.documentElement;
-  const saved = localStorage.getItem('theme');
-  if(saved){ root.setAttribute('data-theme', saved); }
-  // default icon
-  requestAnimationFrame(()=>{
-    const btn = document.querySelector('.theme-toggle');
-    if(!btn) return;
-    const isDark = root.getAttribute('data-theme') === 'dark';
-    btn.textContent = isDark ? '☀' : '☾';
-    btn.addEventListener('click', ()=>{
-      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      btn.textContent = next === 'dark' ? '☀' : '☾';
-    });
-  });
-})();
-</script>
+	  // закрытие по клику вне изображения
+	  lightbox.addEventListener('click', e=>{
+		if(e.target === lightbox) lightbox.classList.remove('show');
+	  });
 
+	  // клавиатура
+	  document.addEventListener('keydown', e=>{
+		if(!lightbox.classList.contains('show')) return;
+		if(e.key === 'Escape') lightbox.classList.remove('show');
+		if(e.key === 'ArrowLeft') showImage(index - 1);
+		if(e.key === 'ArrowRight') showImage(index + 1);
+	  });
+	})();
+	</script>
+	<script>
+	  const html = document.documentElement;
+	  const logo = document.querySelector('.brand-logo');
+
+	  function updateLogo() {
+		if (html.getAttribute('data-theme') === 'light') {
+		  logo.src = 'img/portfolio/logo-light.png'; // тёмное на светлой теме
+		} else {
+		  logo.src = 'img/portfolio/logo-dark.png'; // светлое на тёмной теме
+		}
+	  }
+
+	  // запускаем при загрузке
+	  updateLogo();
+
+	  // отслеживаем переключение темы
+	  const observer = new MutationObserver(updateLogo);
+	  observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+	</script>
 
 </body>
 </html>
