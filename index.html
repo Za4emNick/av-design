@@ -12,6 +12,11 @@
 	<link rel="icon" type="image/png" href="img/portfolio/logo-light.png">
 
 
+	/* === Logo transition state (white transparent) === */
+	.brand-logo.transitioning {
+	  filter: brightness(2.5) opacity(0.8);
+	  transition: filter 0.4s ease, opacity 0.4s ease;
+	}
 
   <style>
     /* === DESIGN TOKENS === */
@@ -110,7 +115,7 @@
     .theme-toggle{
       padding:10px 14px;
       border:1px solid var(--border);
-      background:transparent;
+      background:transpareфnt;
       color:var(--text);
       border-radius:999px;
       cursor:pointer;
@@ -513,7 +518,26 @@
 	  opacity: 0.95;
 	}
 
-	
+	.brand-logo {
+	  position: relative;
+	}
+
+	.brand-logo::before {
+	  content: "";
+	  position: absolute;
+	  inset: 0;
+	  background-image: url("img/portfolio/logo-light.png");
+	  background-size: contain;
+	  background-repeat: no-repeat;
+	  background-position: center;
+	  opacity: 0;
+	  transition: opacity .4s ease;
+	}
+
+	[data-theme="light"] .brand-logo::before {
+	  opacity: 1;
+	}
+
 
 </style>
 	
@@ -810,24 +834,49 @@
 	  });
 	})();
 	</script>
-	<script>
+				<script>
 	  const html = document.documentElement;
 	  const logo = document.querySelector('.brand-logo');
 
 	  function updateLogo() {
 		if (html.getAttribute('data-theme') === 'light') {
-		  logo.src = 'img/portfolio/logo-light.png'; // тёмное на светлой теме
+		  logo.src = 'img/portfolio/logo-light.png';
 		} else {
-		  logo.src = 'img/portfolio/logo-dark.png'; // светлое на тёмной теме
+		  logo.src = 'img/portfolio/logo-dark.png';
 		}
 	  }
 
-	  // запускаем при загрузке
-	  updateLogo();
+	  function smoothLogoTransition() {
+		logo.classList.add('transitioning');
+		logo.style.filter = 'brightness(3) opacity(0.8)';
+		logo.style.transition = 'filter 0.4s ease, opacity 0.4s ease';
 
-	  // отслеживаем переключение темы
-	  const observer = new MutationObserver(updateLogo);
+		// вместо обнуления src просто скрываем текущее изображение
+		logo.style.opacity = '0';
+		logo.style.background = 'rgba(255,255,255,0.6)'; // временный белый слой
+
+		// подменяем само изображение немного позже
+		setTimeout(() => {
+		  updateLogo();
+		  logo.style.background = 'none';
+		  logo.style.opacity = '1';
+		}, 300);
+
+		setTimeout(() => {
+		  logo.classList.remove('transitioning');
+		  logo.style.filter = '';
+		  logo.style.opacity = '';
+		}, 700);
+	  }
+
+	  const observer = new MutationObserver((mutations) => {
+		for (const m of mutations) {
+		  if (m.attributeName === 'data-theme') smoothLogoTransition();
+		}
+	  });
 	  observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+
+	  updateLogo();
 	</script>
 
 </body>
