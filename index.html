@@ -108,19 +108,44 @@
     .menu a:hover{text-decoration:underline}
     .menu-actions{display:flex;align-items:center;gap:12px}
 
-    /* Theme toggle */
-    .theme-toggle{
-      padding:10px 14px;
-      border:1px solid var(--border);
-      background:transpareфnt;
-      color:var(--text);
-      border-radius:999px;
-      cursor:pointer;
-      transition:transform .25s ease, background .25s ease, color .25s ease, opacity .4s ease, filter .4s ease;
-      opacity:.0; transform:translateY(6px);
-    }
-    .theme-toggle.ready{opacity:1; transform:none}
-    .theme-toggle:hover{transform:translateY(-1px);background:var(--text);color:var(--bg)}
+	    /* Theme toggle */
+	 .theme-toggle {
+	  padding: 10px 14px;
+	  border: 1px solid var(--border);
+	  background: transparent;
+	  color: var(--text);
+	  border-radius: 999px;
+	  cursor: pointer;
+	  font-size: 18px;
+	  line-height: 1;
+	  transition: all 0.3s ease;
+	  opacity: 0;
+	  transform: translateY(6px);
+	}
+	.theme-toggle.ready {
+	  opacity: 1;
+	  transform: none;
+	}
+	.theme-toggle:hover {
+	  transform: translateY(-2px);
+	  background: var(--text);
+	  color: var(--bg);
+	}
+	
+	/* 👇 Адаптация цвета иконки при разных темах */
+	[data-theme="dark"] .theme-toggle {
+	  color: #fff;
+	  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+	}
+	[data-theme="light"] .theme-toggle {
+	  color: #000;
+	  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
+	}
+	
+	/* Плавная смена темы */
+	.theme-toggle {
+	  transition: color 0.3s ease, background 0.3s ease, transform 0.3s ease, filter 0.3s ease;
+	}
 
     /* subtle dark fade for legibility + fade-out to content */
     .nyc-bg::after{
@@ -736,9 +761,10 @@
       if(!btn) return;
 
       // initial state from DOM attribute (already set in head)
-      function setIcon(){
-        btn.textContent = (root.getAttribute('data-theme') === 'dark') ? '☀' : '☾';
-      }
+	    function setIcon(){
+	  const theme = root.getAttribute('data-theme');
+	  btn.innerHTML = theme === 'dark' ? '☀' : '🌙';}
+
       setIcon();
       // gentle appear
       requestAnimationFrame(()=>btn.classList.add('ready'));
