@@ -559,6 +559,42 @@
 	[data-theme="light"] .brand-logo::before {
 	  opacity: 1;
 	}
+			/* === FIX: убираем зазор между изображением и подписью === */
+	.card {
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: flex-start;
+	  align-items: stretch;
+	  overflow: hidden;
+	  border: 1px solid var(--border);
+	  border-radius: var(--radius);
+	  box-shadow: var(--shadow);
+	  background: var(--card);
+	}
+	
+	.card img {
+	  display: block;
+	  width: 100%;
+	  height: auto;
+	  margin: 0;
+	  padding: 0;
+	  border: none;
+	  vertical-align: middle;
+	}
+	
+	.card figcaption {
+	  margin: 0;
+	  padding: 12px 0 10px;
+	  text-align: center;
+	  font-size: 13px;
+	  text-transform: uppercase;
+	  letter-spacing: 0.05em;
+	  color: var(--muted);
+	  border-top: 1px solid var(--border);
+	  background: transparent;
+	  line-height: 1.2;
+	}
+
 
 
 </style>
